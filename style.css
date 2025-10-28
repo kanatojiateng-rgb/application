@@ -1,0 +1,76 @@
+#chart-container {
+  width: 400px;
+  height: 400px;
+  margin: 20px  auto;
+}
+
+h1 {
+ font-size: 45px;
+ color:orange;
+ text-align: center;
+}
+
+h2 {
+  font-size: 37px;
+}
+
+h3 {
+  font-size: 30px;
+  color: green;
+}
+
+body {
+  background-color: lightcyan;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 100vh;
+}
+
+.wrapper {
+  text-align: center;
+}
+
+div {
+  font-size: 30px;
+  color:plum;
+  flex: auto;
+  
+}
+
+p {
+  font-size: 25px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.input-area, .result-area {
+  flex: 1;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.input-area p {
+  margin: 30px 0;
+}
+
+input[type="text"] {
+  width: 120px;
+  padding: 5px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 8px 16px;
+  font-size: 15px;
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
