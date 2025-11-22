@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>節約投資アプリ完成版</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{url_for('static', filename='script.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+</head>
+<body>
+
+<div class="wrapper">
+
+<h1>節 約 投 資 ア プ リ</h1>
+
+<div class="container">
+ <div class="input-area">
+<h2>◇ 月 の 支 出 入 力</h2>
+
+<h3>月を選択：
+     <select id="monthSelector">
+      <option value="1">１月</option>
+      <option value="2">２月</option>
+      <option value="3">３月</option>
+      <option value="4">４月</option>
+      <option value="5">５月</option>
+      <option value="6">６月</option>
+      <option value="7">７月</option>
+      <option value="8">８月</option>
+      <option value="9">９月</option>
+      <option value="10">１０月</option>
+      <option value="11">１１月</option>
+      <option value="12">１２月</option>
+      
+
+     </select>
+    </h3>
+
+<p>食費：<input type="text" id="food"> 円</p>
+<p>交通費：<input type="text" id="transport"> 円</p>
+<p>趣味：<input type="text" id="hobby"> 円</p>
+<p>その他：<input type="text" id="other"> 円</p>
+<button id="calculateBtn">計算する</button>
+
+<div class="analysis-container">
+    <p class="analysis-label disabled-analysis" id="analysisLabel">～分析結果～</p>
+
+     <p class="warning-text" id="warningMessage" style="display: none;">
+        ※ データを12ヶ月分(1年分)貯める必要があります。
+     </p>
+</div>
+
+</div>
+
+
+<div class="result-area">
+ <h2>グラフ・合計表示</h2>
+<h3>支出の内訳 (円グラフ)</h3>
+<div id="chart-container">
+<canvas id="myChart"></canvas>
+</div>
+
+<div>
+<p>合計金額： <span id="total">0</span> 円</p>
+</div>
+
+</body>
+</html>
