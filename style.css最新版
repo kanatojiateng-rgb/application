@@ -1,0 +1,108 @@
+#chart-container {
+  width: 400px;
+  height: 400px;
+  margin: 20px  auto;
+}
+
+h1 {
+ font-size: 45px;
+ color:orange;
+ text-align: center;
+}
+
+h2 {
+  font-size: 37px;
+}
+
+h3 {
+  font-size: 30px;
+  color: green;
+}
+
+body {
+  background-color: lightcyan;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 100vh;
+}
+
+.wrapper {
+  text-align: center;
+}
+
+div {
+  font-size: 30px;
+  color:plum;
+  flex: auto;
+  
+}
+
+p {
+  font-size: 25px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.input-area, .result-area {
+  flex: 1;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.input-area p {
+  margin: 30px 0;
+}
+
+input[type="text"] {
+  width: 120px;
+  padding: 5px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 8px 16px;
+  font-size: 15px;
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.analysis-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* 分析結果の基本スタイル */
+.analysis-label {
+  font-size: 28px;
+  font-weight: bold;
+  cursor: default; /* 初期状態ではクリック不可のカーソル */
+  margin-bottom: 5px;
+  /* color: darkred; <-- 常に有効な色を定義してもいいが、 今回はdisabledが優先 */
+}
+
+/* データ不足時の色とカーソル */
+.analysis-label.disabled-analysis {
+  color: gray; /* 無効時はグレー */
+}
+
+/* データが揃った時の色とカーソル */
+.analysis-label.enabled-analysis {
+    color: darkred; /* 有効時は濃い赤 */
+    cursor: pointer; /* クリックできることを示す */
+}
+
+/* 警告テキストのスタイル */
+.warning-text {
+  color: red;
+  font-size: 18px;
+  margin-top: 0;
+}
