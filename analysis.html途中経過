@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>分析・シミュレーション結果</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style_analysis.css')}}">
+</head>
+<body>
+
+<div class="report-container">
+<h1>節約投資分析レポート</h1>
+
+<div class="chart-box">
+<h2>① 過去12ヵ月の支出推移</h2>
+<div class="summary-text">蓄積されたデータに基づき、あなたの支出の波を可視化しました。</div>
+<canvas id="expenseLineChart"></canvas>
+</div>
+
+<div class="chart-box">
+<h2>② 将来の資産形成シミュレーション</h2>
+<div class="summary-text">平均的な節約額を投資に回し、年利5%で運用できた場合の20年間の予測です。</div>
+<canvas id="investmentChart"></canvas>
+</div>
+
+<a href="/" class="back-link"> 入力画面に戻る</a>
+</div>
+
+<script>
+    // Pythonからのデータ受け取り
+    const labels = {{ labels| safe}};
+    const totals = {{ totals| safe}};
+    const simData = {{ sim_data|safe}};
+</script>
+</body>
+</html>
