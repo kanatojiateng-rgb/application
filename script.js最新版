@@ -1,0 +1,179 @@
+
+// 仮のデータ蓄積カウンター（実際にはサーバーやローカルストレージから取得）
+let monthlyDataCount = 0; // 初期値は0とし、サーバーから取得する
+const REQUIRED_MONTHS = 12; // 分析に必要な月数
+let myChart; // Chart.jsのインスタンスをグローバルで保持
+
+function parseToNumber(value) {
+  let str = String(value || "");
+  // 全角数字を半角に変換
+ str = str.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 65248)); 
+  const numStr = str.replace(/[^0-9]/g, "");
+  return Number(numStr) || 0; 
+}
+
+// 分析ラベルの状態を更新する関数を独立
+function updateAnalysisState(count) { 
+    const warningElement = document.getElementById("warningMessage");
+    const analysisLabel = document.getElementById("analysisLabel");
+
+    // データ件数に応じてグローバル変数 monthlyDataCount も更新
+    monthlyDataCount = count;
+
+    if (count >= REQUIRED_MONTHS) {
+        // **データが揃った場合** 
+        warningElement.style.display = 'none';// 警告を非表示 
+
+        analysisLabel.classList.remove('disabled-analysis'); // グレーを解除
+        analysisLabel.classList.add('enabled-analysis'); // 赤色を適用し、クリック可能に
+    } else {
+        // **データが不足している場合** 
+        warningElement.style.display = 'block'; // 警告を表示 (ブロック要素として)
+        
+        analysisLabel.classList.remove('enabled-analysis');
+        analysisLabel.classList.add('disabled-analysis'); // グレーを適用し、クリック不可に
+    }
+}
+
+async function updateDataAndChart() {
+  // 1. 入力値の取得
+  const food = parseToNumber(document.getElementById("food").value);
+  const transport = parseToNumber(document.getElementById("transport").value);
+  const hobby = parseToNumber(document.getElementById("hobby").value);  
+  const other = parseToNumber(document.getElementById("other").value);
+  
+  // ユーザーが選択した月を取得
+  const selectedMonthValue = document.getElementById("monthSelector").value;
+  const currentMonth = parseInt(selectedMonthValue);
+
+  // 月選択チェック 
+  if (selectedMonthValue === "" || isNaN(currentMonth)) {
+      alert("データを保存する月を選択してください。");
+      return;
+  }
+
+  // 2. 合計金額の計算と表示
+  const total = food + transport + hobby + other;
+  document.getElementById("total").textContent = total.toLocaleString();
+
+  if (total === 0) {
+      alert("数値を入力してください。");
+      return; //ここで処理を中断し、グラフ更新や保存を行わない
+  }
+
+  // 3. グラフデータの更新と再描画(現在の入力値で一時的に更新)
+    if (myChart) {
+      myChart.data.datasets[0].data = [food,transport,hobby,other]; //初期表示のデータ
+      myChart.update();
+    }
+  // 4. バックエンドAPIへのデータ保存（「保存される場所」への処理）
+  const  expenseData = {
+      month: currentMonth,
+      food: food,
+      transport: transport,
+      hobby: hobby,
+      other: other
+  };
+
+
+  try {
+      const response = await fetch('/api/save_expense', {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(expenseData)
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        console.log(result.message);
+        alert(`${expenseData.month}月のデータを保存しました！`);
+
+        // サーバーから返された最新の件数で分析状態を更新
+        updateAnalysisState(result.total_count);
+      } else { 
+        alert("データの保存に失敗しました: " + result.message);
+      }
+  } catch (error) {
+    console.error('通信エラー:', error);
+    alert("サーバーとの通信中にエラーが発生しました。");
+  }
+}
+
+window.onload = async function() {
+// 1.入力フィールドの初期化（リロードで消える動作）
+  document.getElementById("food").value = "";
+  document.getElementById("transport").value = "";
+  document.getElementById("hobby").value = "";
+  document.getElementById("other").value = "";
+  document.getElementById("total").textContent = "0";
+
+// 2. グラフの初期化（変更なし）
+  const ctx = document.getElementById("myChart").getContext("2d");
+  myChart = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["食費", "交通費", "趣味", "その他"],
+      datasets: [{
+        data: [1,1,1,1], //初期データ
+        backgroundColor: [ "#66b3ff", "#99ff99", "#ffcc66", "#ff6666"]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      Plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: {
+            size: 14
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.parsed;
+              return `${label}: ${value.toLocaleString()}円`;
+            }
+
+          }
+        }
+      }
+    }
+  });
+
+  // 3. サーバーから現在のデータ件数を取得し、分析状態を初期化
+  try {
+      const response = await fetch('/api/get_data_count');
+      const result = await response.json();
+
+      if (result.success) {
+         updateAnalysisState(result.total_count);
+      } else {
+        console.error("データ件数の取得に失敗しました:", result.message);
+      }
+    } catch (error) {
+        console.error('データ件数取得の通信エラー:', error);
+    }  
+  // 4. イベントリスナーの設定
+  const calculateBtn = document.getElementById('calculateBtn');
+if (calculateBtn) {
+  calculateBtn.addEventListener('click', updateDataAndChart);
+}
+
+const analysisLabel = document.getElementById('analysisLabel');
+if (analysisLabel) {
+  analysisLabel.addEventListener('click', function() {
+    if (monthlyDataCount >= REQUIRED_MONTHS) {
+      alert("分析結果を表示します！ (ここに分析結果表示を記述）");
+    } else {
+      console.log("データ不足のため、分析は実行できません。");
+    }
+  });
+ }
+};
+
