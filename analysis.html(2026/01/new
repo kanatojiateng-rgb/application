@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>分析・シミュレーション結果</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="report-container">
+<h1>節約投資分析レポート</h1>
+
+<div class="chart-container">
+
+<div class="chart-box">
+<h2>① 過去12ヵ月の支出推移</h2>
+<div class="summary-text">月ごとの支出合計の推移です。</div>
+<div class="canvas-container">
+<canvas id="expenseLineChart"></canvas>
+</div>
+</div>
+
+<div class="chart-box">
+<h2>② 将来の資産形成シミュレーション</h2>
+<div class="summary-text">平均的な節約額を投資に回し、年利5%で運用できた場合の20年間の予測です。</div>
+<div class="canvas-container">
+<canvas id="investmentChart"></canvas>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="analysis-section">
+  <h2>③ AIによる詳細分析</h2>
+
+  <div class="metrics-grid">
+    <div class="metrics-card">
+      <span class="metric-label">平均月間支出</span>
+      <span class="metric-value">124,500円</span>
+    </div>
+    <div class="metrics-card">
+        <span class="metric-label">前月比</span>
+        <span class="metric-value status-down">▼ 12%</span> </div>
+
+    <div class="metrics-card">
+      <span class="metric-label">年間節約総額</span>
+      <span class="metric-value">320,000円</span>
+    </div>
+  </div>
+
+
+  <div class="analysis-card">
+    <h3>支出傾向のアドバイス</h3>
+    <p class="analysis-text">
+       過去12ヵ月のデータによると、あなたの支出は<strong>「食費」</strong>が安定しており、非常に良い家計管理ができています。
+       一方で、<strong>8月と12月</strong>に趣味が跳ね上がる傾向があるため、その時期に備えて5月・6月から「イベント積立」をしておくと、さらに資産形成が加速します！
+    </p>
+  </div>
+</div>
+
+<style>
+body {
+  background-color: lightcyan;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 40px;
+}
+
+.chart-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 180px;
+  max-width: 1200px;
+}
+
+.chart-box {
+  flex: 1;
+  min-width: 450px;
+  max-width: 600px;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.canvas-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+.report-container h1 {
+  color: plum;
+  text-align: center;
+  font-size: 50px;
+}
+
+.chart-box h2 {
+  color: pink;
+}
+
+.summary-text {
+  color: peru;
+}
+
+</style>
+<script>
+ const chartDataFromServer = {
+        labels: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+        totals: [120000, 115000, 130000, 110000, 105000, 125000, 140000, 135000, 110000, 115000, 100000, 150000],
+        simData: [50, 105, 165, 230, 300, 375, 455, 540, 630, 725, 830, 940, 1060, 1190, 1330, 1480, 1640, 1810, 1990, 2180]
+    };
+</script>
+
+<script src="script_analysis.js"></script>
+</body>
+</html>
