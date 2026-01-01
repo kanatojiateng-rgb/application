@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>分析・シミュレーション結果</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="report-container">
+<h1>節約投資分析レポート</h1>
+
+<div class="chart-container">
+
+<div class="chart-box">
+<h2>① 過去12ヵ月の支出推移</h2>
+<div class="summary-text">月ごとの支出合計の推移です。</div>
+<div class="canvas-container">
+<canvas id="expenseLineChart"></canvas>
+</div>
+</div>
+
+<div class="chart-box">
+<h2>② 将来の資産形成シミュレーション</h2>
+<div class="summary-text">平均的な節約額を投資に回し、年利5%で運用できた場合の10年間の予測です。</div>
+<div class="canvas-container">
+<canvas id="investmentChart"></canvas>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+
+<style>
+body {
+  background-color: lightcyan;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 40px;
+}
+
+.chart-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 180px;
+  max-width: 1200px;
+}
+
+.chart-box {
+  flex: 1;
+  min-width: 350px;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.report-container h1 {
+  color: plum;
+  text-align: center;
+  font-size: 50px;
+}
+
+.chart-box h2 {
+  color: pink;
+}
+
+.summary-text {
+  color: peru;
+}
+
+</style>
+<script>
+    const chartDataFromServer = {
+        labels: JSON.parse('{{ labels|safe}}'),
+        totals: JSON.parse('{{ totals|safe }}'),
+        simData: JSON.parse('{{ sim_data|safe}}')
+    };
+</script>
+<script src="{{url_for('static', filename='js/script_analysis.js') }}"></script>
+</body>
+</html>
