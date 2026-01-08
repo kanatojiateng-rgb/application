@@ -1,0 +1,149 @@
+// 1. グローバル変数の定義
+let monthlyDataCount = 0; 
+const REQUIRED_MONTHS = 12; 
+let myChart; 
+
+// 2. 変換関数
+function parseToNumber(value) {
+    let str = String(value || "");
+    str = str.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 65248)); 
+    const numStr = str.replace(/[^0-9]/g, "");
+    return Number(numStr) || 0; 
+}
+
+// 3. 件数チェックとUI更新関数（独立させて定義）
+async function checkAndEnableAnalysis() {
+    try {
+        const response = await fetch('/api/get_data_count'); 
+        const data = await response.json();
+
+        monthlyDataCount = data.total_count;
+        console.log("現在のデータ件数:", monthlyDataCount);
+
+        // HTMLのID「analysis-link-btn」に合わせて取得
+        const analysisBtn = document.getElementById('analysis-link-btn');
+        const warningMsg = document.getElementById('warningMessage');
+
+        if (analysisBtn) {
+            if (monthlyDataCount >= REQUIRED_MONTHS) {
+                analysisBtn.classList.remove('disabled-analysis');
+                analysisBtn.classList.add('enabled-analysis');
+                analysisBtn.style.pointerEvents = 'auto';
+                analysisBtn.style.cursor = 'pointer';
+                analysisBtn.style.opacity = '1';
+                if (warningMsg) {
+                    warningMsg.innerText = "✅ 12カ月分のデータが揃いました！クリックして分析レポートへ";
+                    warningMsg.style.color = "green";
+                }
+            } else {
+                analysisBtn.classList.add('disabled-analysis');
+                analysisBtn.classList.remove('enabled-analysis');
+                analysisBtn.style.pointerEvents = 'none';
+                analysisBtn.style.opacity = '0.5';
+                if (warningMsg) {
+                    warningMsg.innerText = `※ あと ${12 - monthlyDataCount} ヵ月分のデータ入力が必要です (現在 ${monthlyDataCount}ヵ月)`;
+                    warningMsg.style.color = "red";
+                }
+            }
+        }
+    } catch (e) {
+        console.error("件数チェックに失敗しました", e);
+    }
+}
+
+// 4. データ更新・保存関数
+async function updateDataAndChart() {
+    const food = parseToNumber(document.getElementById("food").value);
+    const transport = parseToNumber(document.getElementById("transport").value);
+    const hobby = parseToNumber(document.getElementById("hobby").value);  
+    const other = parseToNumber(document.getElementById("other").value);
+    const selectedMonthValue = document.getElementById("monthSelector").value;
+    const currentMonth = parseInt(selectedMonthValue);
+
+    if (selectedMonthValue === "" || isNaN(currentMonth)) {
+        alert("データを保存する月を選択してください。");
+        return;
+    }
+
+    const total = food + transport + hobby + other;
+    document.getElementById("total").textContent = total.toLocaleString();
+
+    if (total === 0) {
+        alert("数値を入力してください。");
+        return;
+    }
+
+    if (myChart) {
+        myChart.data.datasets[0].data = [food, transport, hobby, other];
+        myChart.update();
+    }
+
+    const expenseData = {
+        month: currentMonth,
+        food: food,
+        transport: transport,
+        hobby: hobby,
+        other: other
+    };
+
+    try {
+        // Python側のURL「/api/save_expense」に合わせて修正
+        const response = await fetch('/api/save_expense', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(expenseData)
+        });
+        
+        if (response.ok) {
+            console.log("保存成功");
+            // 保存直後に件数を再確認してボタンを更新
+            checkAndEnableAnalysis();
+        }
+    } catch (e) {
+        console.error("保存失敗", e);
+    }
+}
+
+// 5. 初期化処理
+window.onload = function() {
+    // グラフの初期化
+    const ctx = document.getElementById("myChart").getContext("2d");
+    myChart = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: ["食費", "交通費", "趣味", "その他"],
+            datasets: [{
+                data: [1, 1, 1, 1],
+                backgroundColor: ["#66b3ff", "#99ff99", "#ffcc66", "#ff6666"]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // イベント登録
+    const calculateBtn = document.getElementById('calculateBtn');
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', updateDataAndChart);
+    }
+
+    const analysisBtn = document.getElementById('analysis-link-btn');
+    if (analysisBtn) {
+        analysisBtn.addEventListener('click', function(e) {
+            if (monthlyDataCount < 12) {
+                e.preventDefault();
+                alert(`あと ${12 - monthlyDataCount} ヵ月分のデータが必要です。`);
+            } else {
+                window.location.href = "/analysis";
+            }
+        });
+    }
+
+    // 最初に一度だけサーバーから現在の件数を取得
+    checkAndEnableAnalysis();
+};
