@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>節約投資アプリ完成版</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+</head>
+<body>
+
+<div class="wrapper">
+
+<h1>節 約 投 資 ア プ リ</h1>
+
+<div class="container">
+ <div class="input-area">
+<h2>◇ 月 の 支 出 入 力</h2>
+
+<h3>月を選択：
+     <select id="monthSelector">
+      <option value="1">１月</option>
+      <option value="2">２月</option>
+      <option value="3">３月</option>
+      <option value="4">４月</option>
+      <option value="5">５月</option>
+      <option value="6">６月</option>
+      <option value="7">７月</option>
+      <option value="8">８月</option>
+      <option value="9">９月</option>
+      <option value="10">１０月</option>
+      <option value="11">１１月</option>
+      <option value="12">１２月</option>
+      
+
+     </select>
+    </h3>
+
+    <p>食費：<input type="text" id="food"> 円</p>
+    <p>交通費：<input type="text" id="transport"> 円</p>
+    <p>趣味：<input type="text" id="hobby"> 円</p>
+    <p>その他：<input type="text" id="other"> 円</p>
+
+    <button id="calculateBtn">計算する</button>
+
+    <div class="analysis-container">
+    <a id="analysis-link-btn" 
+   class="analysis-label disabled-analysis" 
+   style="text-decoration: none; display: block; pointer-events: none; opacity: 0.5; cursor: not-allowed;">
+   ～分析結果～
+</a>
+     <p class="warning-text" id="warningMessage">
+        ※ データを12ヶ月分(1年分)貯める必要があります。
+     </p>
+</div>
+
+</div>
+
+
+<div class="result-area">
+ <h2>グラフ・合計表示</h2>
+<h3>支出の内訳 (円グラフ)</h3>
+<div id="chart-container">
+<canvas id="myChart"></canvas>
+</div>
+
+<div>
+<p>合計金額： <span id="total">0</span> 円</p>
+</div>
+
+<style>
+ #chart-container {
+  width: 400px;
+  height: 400px;
+  margin: 20px  auto;
+}
+
+h1 {
+ font-size: 45px;
+ color:orange;
+ text-align: center;
+}
+
+h2 {
+  font-size: 37px;
+}
+
+h3 {
+  font-size: 30px;
+  color: green;
+}
+
+body {
+  background-color: lightcyan;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 100vh;
+}
+
+.wrapper {
+  text-align: center;
+}
+
+div {
+  font-size: 30px;
+  color:plum;
+  flex: auto;
+  
+}
+
+p {
+  font-size: 25px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.input-area, .result-area {
+  flex: 1;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.input-area p {
+  margin: 30px 0;
+}
+
+input[type="text"] {
+  width: 120px;
+  padding: 5px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 8px 16px;
+  font-size: 15px;
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.analysis-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* 分析結果の基本スタイル */
+.analysis-label {
+  font-size: 28px;
+  font-weight: bold;
+  cursor: default; /* 初期状態ではクリック不可のカーソル */
+  margin-bottom: 5px;
+  /* color: darkred; <-- 常に有効な色を定義してもいいが、 今回はdisabledが優先 */
+}
+
+/* データ不足時の色とカーソル */
+.analysis-label.disabled-analysis {
+  color: gray; /* 無効時はグレー */
+}
+
+/* データが揃った時の色とカーソル */
+.analysis-label.enabled-analysis {
+    color: darkred; /* 有効時は濃い赤 */
+    cursor: pointer; /* クリックできることを示す */
+}
+
+/* 警告テキストのスタイル */
+.warning-text {
+  color: red;
+  font-size: 18px;
+  margin-top: 0;
+}
+   
+</style>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
